@@ -1,0 +1,64 @@
+name: .NET Build, Unit, and Integration Tests, and Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build, Test and Publish
+    runs-on: self-hosted
+
+    steps:
+    # - name: Backup existing code and logs
+    #   run: |
+    #     TIMESTAMP=$(date +"%Y-%m-%d-%H:%M:%S")
+    #     CONTAINER_NAME="contactquery_container"
+    #     LOG_FILE="/home/natan/backups/contact-query-logs-$TIMESTAMP.log"
+    #     docker logs $CONTAINER_NAME > $LOG_FILE        
+    #     zip -r /home/natan/backups/contact-query-backup-$TIMESTAMP.zip ${{ github.workspace }} $LOG_FILE
+    #     rm $LOG_FILE
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check running user
+      run: whoami
+      
+    # removido pois no meu host já tenho as versões do dotnet instaladas
+    # - name: Setup .NET Core SDK
+    #   uses: actions/setup-dotnet@v3
+    #   with:
+    #     dotnet-version: '8.x'
+
+    - name: Restore dependencies
+      run: dotnet restore Contact.Query/Contact.Query.sln
+
+    - name: Build the project
+      run: dotnet build Contact.Query/Contact.Query.sln --no-restore --configuration Release
+
+    - name: Run unit tests
+      run: dotnet test Contact.Query/Contact.Query.Tests/Contact.Query.Tests.csproj --no-build --configuration Release --logger "trx;LogFileName=unit-test-contact-query-results.trx"
+
+    - name: Run integration tests
+      run: dotnet test Contact.Query/Contact.Query.Integration.Tests/Contact.Query.Integration.Tests.csproj --no-build --configuration Release --logger "trx;LogFileName=integration-test-contact-query-results.trx"
+
+    - name: Publish the project
+      if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')
+      run: dotnet publish Contact.Query/Contact.Query.sln --no-build --configuration Release --output ${{ github.workspace }}/publish
+
+    - name: Replace appsettings tech.challenge
+      run: cp -f /home/natan/appsettings/appsettings.json ${{ github.workspace }}/Contact.Query/Contact.Query.Api/appsettings.json
+    
+    - name: Stop and remove existing containers
+      run: |
+        cd Contact.Query && docker-compose -f docker-compose.yaml down
+
+    - name: Build Docker image
+      run: |
+        cd Contact.Query && sudo docker build -t contactquery:latest .
+
+    - name: Deploy using Docker Compose
+      run: |
+        cd Contact.Query && docker-compose -f docker-compose.yaml up -d --build

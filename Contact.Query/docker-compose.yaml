@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  myapp:
+    image: contactquery:latest
+    container_name: contactquery_container
+    ports:
+      - "5205:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "HML"
+    networks:
+      - techchallengenetwork
+
+networks:
+  techchallengenetwork:
+    external: true
