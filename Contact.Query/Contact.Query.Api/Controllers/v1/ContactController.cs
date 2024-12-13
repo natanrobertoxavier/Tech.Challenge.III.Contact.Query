@@ -6,7 +6,7 @@ using Contact.Query.Communication.Response;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace Contact.Query.Api.Controllers;
+namespace Contact.Query.Api.Controllers.v1;
 
 [ServiceFilter(typeof(AuthenticatedUserAttribute))]
 public class ContactController : TechChallengeController
@@ -19,7 +19,7 @@ public class ContactController : TechChallengeController
         [FromQuery] int pageSize = 10)
     {
         var result = await useCase.RecoverAllAsync(page, pageSize);
-        
+
         return Ok(result);
     }
 
