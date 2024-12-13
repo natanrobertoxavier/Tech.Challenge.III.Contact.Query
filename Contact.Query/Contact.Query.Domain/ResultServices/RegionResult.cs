@@ -1,11 +1,15 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Contact.Query.Domain.ResultServices;
 public class RegionResult
 {
-    [JsonProperty("ddd")]
+    [JsonPropertyName("id")]
+    public Guid Id { get; set; }
+
+    [JsonPropertyName("ddd")]
     public int DDD { get; set; }
 
-    [JsonProperty("region")]
+    [JsonPropertyName("region")]
     public string Region { get; set; }
 }

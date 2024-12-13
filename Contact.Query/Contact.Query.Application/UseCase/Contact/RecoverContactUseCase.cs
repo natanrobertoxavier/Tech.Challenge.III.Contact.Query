@@ -44,14 +44,6 @@ public class RecoverContactUseCase(
 
             return output.Success( new ResponseListContactJson(@return.OrderBy(x => x.RegistrationDate).Skip((page -1) * pageSize).Take(pageSize)));
         }
-        catch (ValidationErrorsException ex)
-        {
-            var errorMessage = $"There are validations errors: {string.Concat(string.Join(", ", ex.ErrorMessages), ".")}";
-
-            _logger.Error(ex, errorMessage);
-
-            return output.Failure(ex.ErrorMessages);
-        }
         catch (Exception ex)
         {
             var errorMessage = string.Format("There are an error: {0}", ex.Message);
@@ -62,14 +54,34 @@ public class RecoverContactUseCase(
         }
     }
 
-    public async Task<Result<ResponseListContactJson>> RecoverListAsync(RegionRequestEnum region)
+    public async Task<Result<ResponseListContactJson>> RecoverListAsync(RegionRequestEnum region, int page, int pageSize)
     {
-        var dddIds = await RecoverDDDIdsByRegion(region.GetDescription());
+        var output = new Result<ResponseListContactJson>();
 
-        var entities = await _contactReadOnlyRepository.RecoverAllByDDDIdAsync(dddIds);
+        try
+        {
+            _logger.Information($"Start {nameof(RecoverAllAsync)}.");
 
-        //return await MapToResponseContactJson(entities);
-        throw new NotImplementedException();
+            var token = await GenerateToken();
+
+            var dddIds = await RecoverDDDIdsByRegion(region.GetDescription(), token);
+
+            var entities = await _contactReadOnlyRepository.RecoverAllByDDDIdAsync(dddIds);
+
+            var @return = await MapToResponseContactJson(entities, token);
+
+            _logger.Information($"End {nameof(RecoverAllAsync)}.;");
+
+            return output.Success(new ResponseListContactJson(@return.OrderBy(x => x.RegistrationDate).Skip((page - 1) * pageSize).Take(pageSize)));
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = string.Format("There are an error: {0}", ex.Message);
+
+            _logger.Error(ex, errorMessage);
+
+            return output.Failure(new List<string>() { errorMessage });
+        }
     }
 
     public async Task<Result<ResponseListContactJson>> RecoverListByDDDAsync(int ddd)
@@ -135,17 +147,16 @@ public class RecoverContactUseCase(
         return responseContactJson;
     }
 
-    private async Task<IEnumerable<Guid>> RecoverDDDIdsByRegion(string region)
+    private async Task<IEnumerable<Guid>> RecoverDDDIdsByRegion(string region, string token)
     {
         var (regionReadOnlyRepository, scope) = _repositoryFactory.Create();
 
         using (scope)
         {
-            //var ddd = await regionReadOnlyRepository.RecoverListDDDByRegionAsync(region);
+            var ddd = await regionReadOnlyRepository.RecoverListDDDByRegionAsync(region, token);
 
-            //return ddd.Select(ddd => ddd.Id).ToList();
+            return ddd.Data.RegionsDDD.Select(ddd => ddd.Id).ToList();
         }
-        throw new NotImplementedException();
     }
 
     private async Task<Guid> RecoverRegionIdByDDD(int ddd)

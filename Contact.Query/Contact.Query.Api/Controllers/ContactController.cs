@@ -28,9 +28,11 @@ public class ContactController : TechChallengeController
     [ProducesResponseType(typeof(Result<ResponseListContactJson>), StatusCodes.Status200OK)]
     public async Task<IActionResult> RecoverContactsByRegion(
         [FromQuery][Required] RegionRequestEnum region,
-        [FromServices] IRecoverContactUseCase useCase)
+        [FromServices] IRecoverContactUseCase useCase,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var result = await useCase.RecoverListAsync(region);
+        var result = await useCase.RecoverListAsync(region, page, pageSize);
 
         return Ok(result);
     }
