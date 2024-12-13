@@ -3,13 +3,13 @@
 public struct Result<T>(
     T value,
     bool isSuccess,
-    string error)
+    List<string> errors)
 {
     public T Data { get; } = value;
     public bool IsSuccess { get; } = isSuccess;
-    public string Error { get; } = error;
+    public List<string> Errors { get; } = errors;
 
-    public Result<T> Success(T data) => new Result<T>(data, true, string.Empty);
+    public Result<T> Success(T data) => new Result<T>(data, true, Enumerable.Empty<string>().ToList());
 
-    public new Result<T> Failure(string error) => new Result<T>(default, false, error);
+    public new Result<T> Failure(List<string> errors) => new Result<T>(default, false, errors);
 }

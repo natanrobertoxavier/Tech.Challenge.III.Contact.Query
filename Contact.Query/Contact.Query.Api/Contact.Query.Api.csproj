@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Contact.Query.Communication\Contact.Query.Communication.csproj" />
     <ProjectReference Include="..\Contact.Query.Domain\Contact.Query.Domain.csproj" />
     <ProjectReference Include="..\Contact.Query.Exceptions\Contact.Query.Exceptions.csproj" />
+    <ProjectReference Include="..\Contact.Query.Infrastructure\Contact.Query.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,10 @@
 ﻿namespace Contact.Query.Domain.Entities;
-public class User : BaseEntity
+public class User(
+    Guid id,
+    DateTime registrationDate,
+    string name,
+    string email,
+    string password) : BaseEntity(id, registrationDate)
 {
     public string Name { get; set; }
     public string Email { get; set; }

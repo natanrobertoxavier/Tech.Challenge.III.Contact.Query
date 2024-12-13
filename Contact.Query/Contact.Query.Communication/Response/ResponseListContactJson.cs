@@ -1,5 +1,5 @@
 ﻿namespace Contact.Query.Communication.Response;
-public class ResponseListContactJson
+public class ResponseListContactJson(IEnumerable<ResponseContactJson> contacts)
 {
-    public ResponseContactJson Contacts { get; set; }
+    public IEnumerable<ResponseContactJson> Contacts { get; set; } = contacts;
 }
