@@ -84,18 +84,34 @@ public class RecoverContactUseCase(
         }
     }
 
-    public async Task<Result<ResponseListContactJson>> RecoverListByDDDAsync(int ddd)
+    public async Task<Result<ResponseListContactJson>> RecoverListByDDDAsync(int ddd, int page, int pageSize)
     {
-        var regionIds = await RecoverRegionIdByDDD(ddd);
+        var output = new Result<ResponseListContactJson>();
 
-        var entities = await _contactReadOnlyRepository.RecoverByDDDIdAsync(regionIds);
+        try
+        {
+            _logger.Information($"Start {nameof(RecoverListByDDDAsync)}.");
 
-        //if (entities is not null &&
-        //    entities.Any())
-        //    return await MapToResponseContactJson(entities);
+            var token = await GenerateToken();
 
-        //return new List<ResponseContactJson>();
-        throw new NotImplementedException();
+            var regionIds = await RecoverRegionIdByDDD(ddd, token);
+
+            var entities = await _contactReadOnlyRepository.RecoverByDDDIdAsync(regionIds);
+
+            var @return = await MapToResponseContactJson(entities, token);
+
+            _logger.Information($"End {nameof(RecoverListByDDDAsync)}.;");
+
+            return output.Success(new ResponseListContactJson(@return.OrderBy(x => x.RegistrationDate).Skip((page - 1) * pageSize).Take(pageSize)));
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = string.Format("There are an error: {0}", ex.Message);
+
+            _logger.Error(ex, errorMessage);
+
+            return output.Failure(new List<string>() { errorMessage });
+        }
     }
 
 
@@ -155,21 +171,25 @@ public class RecoverContactUseCase(
         {
             var ddd = await regionReadOnlyRepository.RecoverListDDDByRegionAsync(region, token);
 
+            if (!ddd.IsSuccess)
+                throw new Exception($"An error occurred when calling the Region.Query Api. Error {ddd.Error}.");
+
             return ddd.Data.RegionsDDD.Select(ddd => ddd.Id).ToList();
         }
     }
 
-    private async Task<Guid> RecoverRegionIdByDDD(int ddd)
+    private async Task<Guid> RecoverRegionIdByDDD(int ddd, string token)
     {
         var (regionReadOnlyRepository, scope) = _repositoryFactory.Create();
 
         using (scope)
         {
-            //var regionDDD = await regionReadOnlyRepository.RecoverByDDDAsync(ddd) ??
-            //    throw new ValidationErrorsException(new List<string>() { ErrorsMessages.DDDNotFound });
+            var regionDDD = await regionReadOnlyRepository.RecoverByDDDAsync(ddd, token);
 
-            //return regionDDD.Id;
+            if (!regionDDD.IsSuccess)
+                throw new Exception($"An error occurred when calling the Region.Query Api. Error {regionDDD.Error}.");
+
+            return regionDDD.Data.Id;
         }
-        throw new NotImplementedException();
     }
 }

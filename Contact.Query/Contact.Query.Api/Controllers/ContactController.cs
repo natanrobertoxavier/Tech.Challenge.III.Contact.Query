@@ -42,9 +42,11 @@ public class ContactController : TechChallengeController
     [ProducesResponseType(typeof(Result<ResponseListContactJson>), StatusCodes.Status200OK)]
     public async Task<IActionResult> RecoverContactsByDDD(
         [FromQuery][Required] int ddd,
-        [FromServices] IRecoverContactUseCase useCase)
+        [FromServices] IRecoverContactUseCase useCase,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var result = await useCase.RecoverListByDDDAsync(ddd);
+        var result = await useCase.RecoverListByDDDAsync(ddd, page, pageSize);
 
         return Ok(result);
     }
