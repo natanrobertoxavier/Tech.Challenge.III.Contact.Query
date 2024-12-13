@@ -142,9 +142,32 @@ public class RecoverContactUseCase(
         }
     }
 
-    public Task<Result<ResponseListContactJson>> RecoverByIdsAsync(RequestListIdJson ids)
+    public async Task<Result<ResponseListContactJson>> RecoverContactByIdsAsync(RequestListIdJson request)
     {
-        throw new NotImplementedException();
+        var output = new Result<ResponseListContactJson>();
+
+        try
+        {
+            _logger.Information($"Start {nameof(RecoverContactByIdsAsync)}.");
+
+            var token = await GenerateToken();
+
+            var entities = await _contactReadOnlyRepository.RecoverAllByDDDIdAsync(request.Ids);
+
+            var @return = await MapToResponseContactJson(entities, token);
+
+            _logger.Information($"End {nameof(RecoverContactByIdsAsync)}.;");
+
+            return output.Success(new ResponseListContactJson(@return));
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = string.Format("There are an error: {0}", ex.Message);
+
+            _logger.Error(ex, errorMessage);
+
+            return output.Failure(new List<string>() { errorMessage });
+        }
     }
 
     private async Task<string> GenerateToken()

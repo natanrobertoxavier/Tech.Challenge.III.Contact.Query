@@ -65,13 +65,13 @@ public class ContactController : TechChallengeController
     }
 
     [HttpPost]
-    [Route("contacts/by-ids")]
+    [Route("ddd-ids")]
     [ProducesResponseType(typeof(Result<ResponseListContactJson>), StatusCodes.Status200OK)]
     public async Task<IActionResult> RecoverByIds(
         [FromBody] RequestListIdJson ids,
         [FromServices] IRecoverContactUseCase useCase)
     {
-        var result = await useCase.RecoverByIdsAsync(ids);
+        var result = await useCase.RecoverContactByIdsAsync(ids);
 
         return Ok(result);
     }

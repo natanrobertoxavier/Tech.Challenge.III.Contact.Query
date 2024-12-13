@@ -9,5 +9,5 @@ public interface IRecoverContactUseCase
     Task<Result<ResponseListContactJson>> RecoverListAsync(RegionRequestEnum region, int page, int pageSize);
     Task<Result<ResponseListContactJson>> RecoverListByDDDAsync(int ddd, int page, int pageSize);
     Task<Result<ResponseThereIsContactJson>> ThereIsContactAsync(int ddd, string phoneNumber);
-    Task<Result<ResponseListContactJson>> RecoverByIdsAsync(RequestListIdJson ids);
+    Task<Result<ResponseListContactJson>> RecoverContactByIdsAsync(RequestListIdJson requesst);
 }
