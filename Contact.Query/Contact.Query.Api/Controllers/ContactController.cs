@@ -14,9 +14,11 @@ public class ContactController : TechChallengeController
     [HttpGet]
     [ProducesResponseType(typeof(Result<ResponseListContactJson>), StatusCodes.Status200OK)]
     public async Task<IActionResult> RecoverAllContacts(
-        [FromServices] IRecoverContactUseCase useCase)
+        [FromServices] IRecoverContactUseCase useCase,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var result = await useCase.RecoverAllAsync();
+        var result = await useCase.RecoverAllAsync(page, pageSize);
         
         return Ok(result);
     }

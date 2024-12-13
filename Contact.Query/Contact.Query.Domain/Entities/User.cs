@@ -6,7 +6,7 @@ public class User(
     string email,
     string password) : BaseEntity(id, registrationDate)
 {
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
+    public string Name { get; set; } = name;
+    public string Email { get; set; } = email;
+    public string Password { get; set; } = password;
 }

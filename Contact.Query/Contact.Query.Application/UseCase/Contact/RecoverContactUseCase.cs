@@ -26,7 +26,7 @@ public class RecoverContactUseCase(
     private readonly TokenController _tokenController = tokenController;
     private readonly ILogger _logger = logger;
 
-    public async Task<Result<ResponseListContactJson>> RecoverAllAsync()
+    public async Task<Result<ResponseListContactJson>> RecoverAllAsync(int page, int pageSize)
     {
         var output = new Result<ResponseListContactJson>();
 
@@ -42,7 +42,7 @@ public class RecoverContactUseCase(
 
             _logger.Information($"End {nameof(RecoverAllAsync)}.;");
 
-            return output.Success( new ResponseListContactJson(@return));
+            return output.Success( new ResponseListContactJson(@return.OrderBy(x => x.RegistrationDate).Skip((page -1) * pageSize).Take(pageSize)));
         }
         catch (ValidationErrorsException ex)
         {
@@ -125,7 +125,8 @@ public class RecoverContactUseCase(
                     DDD = ddd.Data.DDD,
                     Region = ddd.Data.Region,
                     Email = entity.Email,
-                    PhoneNumber = entity.PhoneNumber
+                    PhoneNumber = entity.PhoneNumber,
+                    RegistrationDate = entity.RegistrationDate
                 };
             }
         });

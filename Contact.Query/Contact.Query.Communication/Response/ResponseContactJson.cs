@@ -1,4 +1,6 @@
-﻿namespace Contact.Query.Communication.Response;
+﻿using Newtonsoft.Json;
+
+namespace Contact.Query.Communication.Response;
 public class ResponseContactJson
 {
     public Guid ContactId { get; set; }
@@ -8,4 +10,6 @@ public class ResponseContactJson
     public int DDD { get; set; }
     public string PhoneNumber { get; set; }
     public string Email { get; set; }
+    [JsonIgnore]
+    public DateTime RegistrationDate { get; set; }
 }
