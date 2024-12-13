@@ -114,13 +114,35 @@ public class RecoverContactUseCase(
         }
     }
 
-
-    public Task<Result<ResponseListContactJson>> RecoverByIdsAsync(RequestListIdJson ids)
+    public async Task<Result<ResponseThereIsContactJson>> ThereIsContactAsync(int ddd, string phoneNumber)
     {
-        throw new NotImplementedException();
+        var output = new Result<ResponseThereIsContactJson>();
+
+        try
+        {
+            _logger.Information($"Start {nameof(ThereIsContactAsync)}.");
+
+            var token = await GenerateToken();
+
+            var dddId = await RecoverRegionIdByDDD(ddd, token);
+
+            var therIsContact = await _contactReadOnlyRepository.ThereIsRegisteredContact(dddId, phoneNumber);
+
+            _logger.Information($"End {nameof(ThereIsContactAsync)}.;");
+
+            return output.Success(new ResponseThereIsContactJson(therIsContact));
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = string.Format("There are an error: {0}", ex.Message);
+
+            _logger.Error(ex, errorMessage);
+
+            return output.Failure(new List<string>() { errorMessage });
+        }
     }
 
-    public Task<Result<ResponseThereIsContactJson>> ThereIsContactAsync(int ddd, string phoneNumber)
+    public Task<Result<ResponseListContactJson>> RecoverByIdsAsync(RequestListIdJson ids)
     {
         throw new NotImplementedException();
     }
