@@ -64,6 +64,18 @@ public class ContactController : TechChallengeController
         return Ok(result);
     }
 
+    [HttpGet]
+    [Route("recover-by-id/{contactId}")]
+    [ProducesResponseType(typeof(Result<ResponseContactJson>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> RecoverContactById(
+        [FromRoute] Guid contactId,
+        [FromServices] IRecoverContactUseCase useCase)
+    {
+        var result = await useCase.RecoverContactByIdAsync(contactId);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     [Route("ddd-ids")]
     [ProducesResponseType(typeof(Result<ResponseListContactJson>), StatusCodes.Status200OK)]

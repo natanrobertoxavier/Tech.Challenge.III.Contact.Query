@@ -1,5 +1,5 @@
 ﻿namespace Contact.Query.Communication.Response;
-public class ResponseThereIsContactJson(bool thereIsDDDNumber)
+public class ResponseThereIsContactJson(bool thereIsContact)
 {
-    public bool ResponseThereIsContact { get; set; } = thereIsDDDNumber;
+    public bool ThereIsContact { get; set; } = thereIsContact;
 }

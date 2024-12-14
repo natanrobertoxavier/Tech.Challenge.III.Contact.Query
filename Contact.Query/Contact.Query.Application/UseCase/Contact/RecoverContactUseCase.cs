@@ -170,6 +170,50 @@ public class RecoverContactUseCase(
         }
     }
 
+    public async Task<Result<ResponseContactJson>> RecoverContactByIdAsync(Guid contactId)
+    {
+        var output = new Result<ResponseContactJson>();
+
+        try
+        {
+            _logger.Information($"Start {nameof(RecoverListByDDDAsync)}.");
+
+            var token = await GenerateToken();
+
+            var entity = await _contactReadOnlyRepository.RecoverByContactIdAsync(contactId);
+
+            if (entity is null)
+            {
+                _logger.Information($"{nameof(RecoverListByDDDAsync)} No information found for ID {contactId}.;");
+                return output.Success(null);
+            }
+
+            var @return = await MapToResponseContactJson(entity, token);
+
+            _logger.Information($"End {nameof(RecoverListByDDDAsync)}.;");
+
+            return output.Success(
+                new ResponseContactJson(
+                    @return.ContactId,
+                    @return.Region,
+                    @return.FirstName,
+                    @return.LastName,
+                    @return.DDD,
+                    @return.PhoneNumber,
+                    @return.Email,
+                    @return.RegistrationDate
+                ));
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = string.Format("There are an error: {0}", ex.Message);
+
+            _logger.Error(ex, errorMessage);
+
+            return output.Failure(new List<string>() { errorMessage });
+        }
+    }
+
     private async Task<string> GenerateToken()
     {
         var loggedUser = await _loggedUser.RecoverUser();
@@ -206,6 +250,31 @@ public class RecoverContactUseCase(
 
         var responseContactJson = await Task.WhenAll(tasks);
         return responseContactJson;
+    }
+
+    private async Task<ResponseContactJson> MapToResponseContactJson(Domain.Entities.Contact entity, string token)
+    {
+        var (regionReadOnlyrepository, scope) = _repositoryFactory.Create();
+
+        using (scope)
+        {
+            var ddd = await regionReadOnlyrepository.RecoverByIdAsync(entity.DDDId, token);
+
+            if (!ddd.IsSuccess)
+                throw new Exception($"An error occurred when calling the Region.Query Api. Error {ddd.Error}.");
+
+            return new ResponseContactJson
+            {
+                ContactId = entity.Id,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                DDD = ddd.Data.DDD,
+                Region = ddd.Data.Region,
+                Email = entity.Email,
+                PhoneNumber = entity.PhoneNumber,
+                RegistrationDate = entity.RegistrationDate
+            };
+        }
     }
 
     private async Task<IEnumerable<Guid>> RecoverDDDIdsByRegion(string region, string token)
