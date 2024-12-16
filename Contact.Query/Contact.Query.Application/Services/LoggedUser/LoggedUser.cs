@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Contact.Query.Domain.Services;
+using Microsoft.AspNetCore.Http;
 using TokenService.Manager.Controller;
-using Contact.Query.Domain.Services;
 
 namespace Contact.Query.Application.Services.LoggedUser;
 public class LoggedUser(

@@ -1,6 +1,4 @@
-﻿using Azure;
-using Contact.Query.Communication.Response;
-using FluentAssertions;
+﻿using FluentAssertions;
 using System.Net;
 
 namespace Contact.Query.Integration.Tests.Api.Controllers.v1;

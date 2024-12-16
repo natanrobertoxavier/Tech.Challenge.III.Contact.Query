@@ -2,13 +2,13 @@
 
 namespace Contact.Query.Communication.Response;
 public class ResponseContactJson(
-    Guid contactId, 
-    string region, 
-    string firstName, 
-    string lastName, 
-    int dDD, 
-    string phoneNumber, 
-    string email, 
+    Guid contactId,
+    string region,
+    string firstName,
+    string lastName,
+    int dDD,
+    string phoneNumber,
+    string email,
     DateTime registrationDate)
 {
     public Guid ContactId { get; set; } = contactId;
@@ -23,13 +23,13 @@ public class ResponseContactJson(
 
     public ResponseContactJson()
     : this(
-          Guid.Empty, 
-          string.Empty, 
-          string.Empty, 
-          string.Empty, 
-          0, 
+          Guid.Empty,
           string.Empty,
-          string.Empty, 
+          string.Empty,
+          string.Empty,
+          0,
+          string.Empty,
+          string.Empty,
           DateTime.MinValue)
     {
     }

@@ -1,11 +1,11 @@
 using Contact.Query.Api.Filters;
-using Contact.Query.Communication;
 using Contact.Query.Application;
-using Contact.Query.Infrastructure;
-using Prometheus;
+using Contact.Query.Communication;
 using Contact.Query.Domain.Extensions;
-using Contact.Query.Infrastructure.RepositoryAccess;
+using Contact.Query.Infrastructure;
 using Contact.Query.Infrastructure.Migrations;
+using Contact.Query.Infrastructure.RepositoryAccess;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 

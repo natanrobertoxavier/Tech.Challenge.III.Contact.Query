@@ -7,7 +7,7 @@ public class ContactRepository(
 {
     private readonly TechChallengeContext _context = context;
 
-    #pragma warning disable CS8603 // Possível retorno de referência nula.
+#pragma warning disable CS8603 // Possível retorno de referência nula.
 
     public Task<bool> ThereIsRegisteredContact(Guid dddId, string phoneNumber) =>
         _context.Contacts.AnyAsync(c => c.PhoneNumber.Equals(phoneNumber) &&
@@ -23,5 +23,5 @@ public class ContactRepository(
         await _context.Contacts.Where(c => c.Id.Equals(id)).FirstOrDefaultAsync();
 
     public async Task<IEnumerable<Domain.Entities.Contact>> RecoverAllByDDDIdAsync(IEnumerable<Guid> dddIds) =>
-        await _context.Contacts.Where(c => dddIds.Contains(c.Id)).ToListAsync();
+        await _context.Contacts.Where(c => dddIds.Contains(c.DDDId)).ToListAsync();
 }

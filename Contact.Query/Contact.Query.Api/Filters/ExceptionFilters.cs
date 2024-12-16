@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Contact.Query.Communication.Response;
+﻿using Contact.Query.Communication.Response;
 using Contact.Query.Exceptions;
 using Contact.Query.Exceptions.ExceptionBase;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 
 namespace Contact.Query.Api.Filters;

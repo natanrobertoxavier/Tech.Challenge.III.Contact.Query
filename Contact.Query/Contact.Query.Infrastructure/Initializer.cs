@@ -1,17 +1,16 @@
-﻿using FluentMigrator.Runner;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Contact.Query.Domain.Extensions;
-using Contact.Query.Domain.Repositories;
+﻿using Contact.Query.Domain.Extensions;
+using Contact.Query.Domain.Repositories.Contact;
+using Contact.Query.Domain.Repositories.Factories;
 using Contact.Query.Domain.Services;
 using Contact.Query.Infrastructure.RepositoryAccess;
 using Contact.Query.Infrastructure.RepositoryAccess.Repository;
 using Contact.Query.Infrastructure.ServicesAccess;
-using System.Reflection;
-using Contact.Query.Domain.Repositories.Contact;
-using Contact.Query.Domain.Repositories.Factories;
 using Contact.Query.Infrastructure.ServicesAccess.Factories;
+using FluentMigrator.Runner;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Contact.Query.Infrastructure;
 public static class Initializer

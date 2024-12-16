@@ -1,16 +1,12 @@
-﻿using Contact.Query.Communication.Request.Enum;
+﻿using Contact.Query.Application.Services.LoggedUser;
 using Contact.Query.Communication;
-using Contact.Query.Communication.Response;
-using Contact.Query.Exceptions;
-using Contact.Query.Exceptions.ExceptionBase;
 using Contact.Query.Communication.Request;
+using Contact.Query.Communication.Request.Enum;
+using Contact.Query.Communication.Response;
 using Contact.Query.Domain.Repositories.Contact;
 using Contact.Query.Domain.Repositories.Factories;
-using Contact.Query.Application.Services.LoggedUser;
-using TokenService.Manager.Controller;
-using Serilog.Core;
 using Serilog;
-using AutoMapper;
+using TokenService.Manager.Controller;
 
 namespace Contact.Query.Application.UseCase.Contact;
 public class RecoverContactUseCase(
@@ -42,7 +38,7 @@ public class RecoverContactUseCase(
 
             _logger.Information($"End {nameof(RecoverAllAsync)}.;");
 
-            return output.Success( new ResponseListContactJson(@return.OrderBy(x => x.RegistrationDate).Skip((page -1) * pageSize).Take(pageSize)));
+            return output.Success(new ResponseListContactJson(@return.OrderBy(x => x.RegistrationDate).Skip((page - 1) * pageSize).Take(pageSize)));
         }
         catch (Exception ex)
         {

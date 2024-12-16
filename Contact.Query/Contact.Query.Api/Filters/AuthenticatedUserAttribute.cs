@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.IdentityModel.Tokens;
-using Contact.Query.Communication.Response;
+﻿using Contact.Query.Communication.Response;
 using Contact.Query.Domain.Services;
 using Contact.Query.Exceptions;
 using Contact.Query.Exceptions.ExceptionBase;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using TokenService.Manager.Controller;
 

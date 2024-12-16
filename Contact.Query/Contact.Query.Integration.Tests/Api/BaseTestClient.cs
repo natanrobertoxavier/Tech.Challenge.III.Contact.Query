@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System.Text;
-using System.Text.Json;
-using Contact.Query.Communication.Request;
 using TokenService.Manager.Controller;
 
 namespace Contact.Query.Integration.Tests.Api;
@@ -24,7 +22,7 @@ public abstract class BaseTestClient
 
     protected static async Task<T> DeserializeResponse<T>(HttpResponseMessage response) =>
         JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
-    
+
     protected string GetValidToken(string email) =>
         _tokenController.GenerateToken(email);
 

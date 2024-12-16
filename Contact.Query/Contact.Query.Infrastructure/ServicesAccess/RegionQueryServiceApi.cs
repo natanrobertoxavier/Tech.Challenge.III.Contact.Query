@@ -1,6 +1,5 @@
 ﻿using Contact.Query.Domain.ResultServices;
 using Contact.Query.Domain.Services;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Net.Http.Headers;
 
