@@ -219,34 +219,60 @@ public class RecoverContactUseCase(
 
     private async Task<IEnumerable<ResponseContactJson>> MapToResponseContactJson(IEnumerable<Domain.Entities.Contact> entities, string token)
     {
-        var tasks = entities.Select(async entity =>
+        var semaphore = new SemaphoreSlim(10);
+        var tasks = new List<Task<ResponseContactJson>>();
+
+        foreach (var entity in entities)
         {
-            var (regionReadOnlyrepository, scope) = _repositoryFactory.Create();
+            await semaphore.WaitAsync();
 
-            using (scope)
+            var task = Task.Run(async () =>
             {
-                var ddd = await regionReadOnlyrepository.RecoverByIdAsync(entity.DDDId, token);
-
-                if (!ddd.IsSuccess)
-                    throw new Exception($"An error occurred when calling the Region.Query Api. Error {ddd.Error}.");
-
-                return new ResponseContactJson
+                try
                 {
-                    ContactId = entity.Id,
-                    FirstName = entity.FirstName,
-                    LastName = entity.LastName,
-                    DDD = ddd.Data.DDD,
-                    Region = ddd.Data.Region,
-                    Email = entity.Email,
-                    PhoneNumber = entity.PhoneNumber,
-                    RegistrationDate = entity.RegistrationDate
-                };
-            }
-        });
+                    var (regionReadOnlyrepository, scope) = _repositoryFactory.Create();
 
-        var responseContactJson = await Task.WhenAll(tasks);
+                    using (scope)
+                    {
+                        var ddd = await regionReadOnlyrepository.RecoverByIdAsync(entity.DDDId, token);
+
+                        if (!ddd.IsSuccess)
+                        {
+                            _logger.Error($"An error occurred when calling the Region.Query API. Error: {ddd.Error}");
+                            return new ResponseContactJson();
+                        }
+
+                        return new ResponseContactJson
+                        {
+                            ContactId = entity.Id,
+                            FirstName = entity.FirstName,
+                            LastName = entity.LastName,
+                            DDD = ddd.Data.DDD,
+                            Region = ddd.Data.Region,
+                            Email = entity.Email,
+                            PhoneNumber = entity.PhoneNumber,
+                            RegistrationDate = entity.RegistrationDate
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Error processing contact: {ContactId}", entity.Id);
+                    return new ResponseContactJson();
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+
+            tasks.Add(task);
+        }
+
+        var responseContactJson = (await Task.WhenAll(tasks)).Where(result => result != null);
         return responseContactJson;
     }
+
 
     private async Task<ResponseContactJson> MapToResponseContactJson(Domain.Entities.Contact entity, string token)
     {
